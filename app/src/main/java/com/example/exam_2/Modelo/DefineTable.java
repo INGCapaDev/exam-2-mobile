@@ -7,6 +7,7 @@ public class DefineTable implements BaseColumns {
 
     public static abstract class Productos {
         public static final String TABLE_NAME = "productos";
+        public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_CODIGO = "codigo";
         public static final String COLUMN_NAME_NOMBRE = "nombre";
         public static final String COLUMN_NAME_MARCA = "marca";
