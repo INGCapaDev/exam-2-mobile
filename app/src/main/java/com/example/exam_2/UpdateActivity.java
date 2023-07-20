@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +33,25 @@ public class UpdateActivity extends AppCompatActivity {
             String codigo = txtCodigo.getText().toString();
             Producto producto = productosDb.getProducto(codigo);
 
+            if(producto == null){
+               Toast.makeText(this, "No se encontro el producto", Toast.LENGTH_SHORT).show();
+               return;
+            }
+            if(producto.getTipo().toString().equals("Perecedero")){
+                tipo="Perecedero";
+                rbNoPerecedero.setChecked(false);
+                rbPerecedero.setChecked(true);
+            }
+
+            if(producto.getTipo().toString().equals("No Perecedero")){
+                tipo="No Perecedero";
+                rbPerecedero.setChecked(false);
+                rbNoPerecedero.setChecked(true);
+            }
+
+
+
+
                 txtNombre.setText(producto.getNombre().toString());
                 txtMarca.setText(producto.getMarca().toString());
                 txtPrecio.setText(producto.getPrecio().toString());
@@ -45,16 +65,22 @@ public class UpdateActivity extends AppCompatActivity {
                 String precio = txtPrecio.getText().toString();
 
                 Producto producto = productosDb.getProducto(codigo);
+                if(producto == null){
+                    Toast.makeText(this, "No se encontro el producto", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Producto nuevoProducto = new Producto();
                 nuevoProducto.setId(producto.getId());
                 nuevoProducto.setCodigo(codigo);
                 nuevoProducto.setNombre(nombre);
                 nuevoProducto.setMarca(marca);
                 nuevoProducto.setPrecio(precio);
+                nuevoProducto.setTipo(tipo);
                 long res = productosDb.updateProducto(nuevoProducto);
 
                 if(res > 0) {
-                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Registro Actualizado", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
                 }
@@ -65,11 +91,29 @@ public class UpdateActivity extends AppCompatActivity {
         });
 
         btnBorrar.setOnClickListener(v -> {
-            if(validar()){
+            if(!txtCodigo.getText().toString().equals("")){
                 String codigo = txtCodigo.getText().toString();
                 Producto producto = productosDb.getProducto(codigo);
-                productosDb.deleteProducto(producto.getId());
-                Toast.makeText(this, "Eliminado con exito", Toast.LENGTH_SHORT).show();
+                if(producto == null) {
+                    Toast.makeText(this, "No se encontro el producto", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Eliminar Producto");
+                builder.setMessage("¿Estás seguro de eliminar el producto?");
+                builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        productosDb.deleteProducto(producto.getId());
+                        Toast.makeText(UpdateActivity.this, "Producto Eliminado", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                builder.setNegativeButton("No", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                Toast.makeText(this, "Ingresa el codigo", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -82,7 +126,7 @@ public class UpdateActivity extends AppCompatActivity {
         String marca = txtMarca.getText().toString();
         String precio = txtPrecio.getText().toString();
 
-        if(codigo.equals("") || nombre.equals("") || marca.equals("") || precio.equals("") ){
+        if(codigo.equals("") || nombre.equals("") || marca.equals("") || precio.equals("") || tipo.equals("")){
             Toast.makeText(this, "Faltan datos de capturar", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -107,10 +151,10 @@ public class UpdateActivity extends AppCompatActivity {
 
         boolean checked = ((RadioButton) view).isChecked();
 
-        if(view.getId() == R.id.perecedero) {
+        if(view.getId() == R.id.perecederoUpdate) {
             tipo = "Perecedero";
         }
-        if(view.getId() == R.id.noperecedero) {
+        if(view.getId() == R.id.noperecederoUpdate) {
             tipo = "No Perecedero";
         }
 

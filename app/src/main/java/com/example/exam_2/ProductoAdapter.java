@@ -38,7 +38,7 @@ public class ProductoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView TextViewNombre, TextViewMarca, TextViewPrecio;
+        TextView TextViewNombre, TextViewMarca, TextViewPrecio, TextViewTipo;
 
         Producto c = lst.get(position);
 
@@ -49,10 +49,12 @@ public class ProductoAdapter extends BaseAdapter {
         TextViewNombre = convertView.findViewById(R.id.txtViewNombre);
         TextViewMarca = convertView.findViewById(R.id.txtViewMarca);
         TextViewPrecio = convertView.findViewById(R.id.txtViewPrecio);
+        TextViewTipo = convertView.findViewById(R.id.txtViewTipo);
 
         TextViewNombre.setText(c.nombre);
         TextViewMarca.setText(c.marca);
         TextViewPrecio.setText(c.precio);
+        TextViewTipo.setText(c.tipo);
 
         return convertView;
     }

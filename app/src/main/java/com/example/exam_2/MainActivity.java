@@ -35,19 +35,38 @@ public class MainActivity extends AppCompatActivity {
                 String marca = txtMarca.getText().toString();
                 String precio = txtPrecio.getText().toString();
 
+
                 Producto nuevoProducto = new Producto();
                 nuevoProducto.setCodigo(codigo);
                 nuevoProducto.setNombre(nombre);
                 nuevoProducto.setMarca(marca);
                 nuevoProducto.setTipo(tipo);
                 nuevoProducto.setPrecio(precio);
-                long res = productosDb.insertProducto(nuevoProducto);
 
-                if(res > 0) {
-                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                Producto existente = productosDb.getProducto(codigo);
+
+                if(existente == null) {
+                    long res = productosDb.insertProducto(nuevoProducto);
+                    if(res > 0) {
+                        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+                    nuevoProducto.setId(existente.getId());
+                    long res = productosDb.updateProducto(nuevoProducto);
+
+                    if(res > 0) {
+                        Toast.makeText(this, "Registro actualizado", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+                    }
+
+
                 }
+
+
+
             }
         });
 
@@ -61,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
             txtNombre.setText("");
             txtPrecio.setText("");
             txtCodigo.setText("");
+            rbNoPerecedero.setChecked(false);
+            rbPerecedero.setChecked(false);
+            tipo="";
         });
 
         btnEditar.setOnClickListener(v -> {
