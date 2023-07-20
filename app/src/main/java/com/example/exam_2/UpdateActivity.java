@@ -1,47 +1,57 @@
 package com.example.exam_2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.exam_2.Modelo.Persistencia;
 import com.example.exam_2.Modelo.ProductosDb;
 
-public class MainActivity extends AppCompatActivity {
+public class UpdateActivity extends AppCompatActivity {
     private EditText txtCodigo, txtNombre, txtMarca, txtPrecio;
     private RadioButton rbPerecedero, rbNoPerecedero;
-    private Button btnGuardar, btnLimpiar, btnProductos, btnEditar;
+    private Button btnActualizar, btnRegresarUpdate, btnBorrar, btnBuscar;
     private ProductosDb productosDb;
     String tipo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_update);
         productosDb = new ProductosDb(this);
         iniciarComponentes();
 
-        btnGuardar.setOnClickListener(v -> {
+        btnBuscar.setOnClickListener(v -> {
+            String codigo = txtCodigo.getText().toString();
+            Producto producto = productosDb.getProducto(codigo);
+
+                txtNombre.setText(producto.getNombre().toString());
+                txtMarca.setText(producto.getMarca().toString());
+                txtPrecio.setText(producto.getPrecio().toString());
+
+        });
+        btnActualizar.setOnClickListener(v -> {
             if (validar()){
                 String codigo = txtCodigo.getText().toString();
                 String nombre = txtNombre.getText().toString();
                 String marca = txtMarca.getText().toString();
                 String precio = txtPrecio.getText().toString();
 
+                Producto producto = productosDb.getProducto(codigo);
                 Producto nuevoProducto = new Producto();
+                nuevoProducto.setId(producto.getId());
                 nuevoProducto.setCodigo(codigo);
                 nuevoProducto.setNombre(nombre);
                 nuevoProducto.setMarca(marca);
-                nuevoProducto.setTipo(tipo);
                 nuevoProducto.setPrecio(precio);
-                long res = productosDb.insertProducto(nuevoProducto);
+                long res = productosDb.updateProducto(nuevoProducto);
 
                 if(res > 0) {
                     Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
@@ -50,50 +60,46 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        btnProductos.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
+        btnRegresarUpdate.setOnClickListener(v -> {
+            finish();
         });
 
-        btnLimpiar.setOnClickListener(v -> {
-            txtMarca.setText("");
-            txtNombre.setText("");
-            txtPrecio.setText("");
-            txtCodigo.setText("");
-        });
+        btnBorrar.setOnClickListener(v -> {
+            if(validar()){
+                String codigo = txtCodigo.getText().toString();
+                Producto producto = productosDb.getProducto(codigo);
+                productosDb.deleteProducto(producto.getId());
+                Toast.makeText(this, "Eliminado con exito", Toast.LENGTH_SHORT).show();
 
-        btnEditar.setOnClickListener(v -> {
-            Intent intent = new Intent(this, UpdateActivity.class);
-            startActivity(intent);
-        });
+            }
 
+
+        });
     }
-private boolean validar(){
+    private boolean validar(){
         String codigo = txtCodigo.getText().toString();
         String nombre = txtNombre.getText().toString();
         String marca = txtMarca.getText().toString();
         String precio = txtPrecio.getText().toString();
 
-        if(codigo.equals("") || nombre.equals("") || marca.equals("") || precio.equals("") || tipo.equals("")){
+        if(codigo.equals("") || nombre.equals("") || marca.equals("") || precio.equals("") ){
             Toast.makeText(this, "Faltan datos de capturar", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         return true;
-}
+    }
     private void iniciarComponentes() {
-        txtCodigo = findViewById(R.id.txtCodigo);
-        txtMarca = findViewById(R.id.txtMarca);
-        txtPrecio = findViewById(R.id.txtPrecio);
-        txtNombre = findViewById(R.id.txtNombre);
-        rbPerecedero = findViewById(R.id.perecedero);
-        rbNoPerecedero = findViewById(R.id.noperecedero);
-        btnGuardar = findViewById(R.id.btnGuardar);
-        btnEditar = findViewById(R.id.btnEditar);
-        btnLimpiar = findViewById(R.id.btnLimpiar);
-        btnProductos = findViewById(R.id.btnProductos);
-
+        txtCodigo = findViewById(R.id.txtCodigoUpdate);
+        txtMarca = findViewById(R.id.txtMarcaUpdate);
+        txtPrecio = findViewById(R.id.txtPrecioUpdate);
+        txtNombre = findViewById(R.id.txtNombreUpdate);
+        rbPerecedero = findViewById(R.id.perecederoUpdate);
+        rbNoPerecedero = findViewById(R.id.noperecederoUpdate);
+        btnActualizar = findViewById(R.id.btnActualizar);
+        btnBuscar = findViewById(R.id.btnBuscar);
+        btnRegresarUpdate = findViewById(R.id.btnRegresarUpdate);
+        btnBorrar = findViewById(R.id.btnBorrar);
     }
 
     @SuppressLint("NonConstantResourceId")
