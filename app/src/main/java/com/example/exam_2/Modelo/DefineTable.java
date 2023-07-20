@@ -13,5 +13,14 @@ public class DefineTable implements BaseColumns {
         public static final String COLUMN_NAME_MARCA = "marca";
         public static final String COLUMN_NAME_PRECIO = "precio";
         public static final String COLUMN_NAME_TIPO = "tipo";
+
+        public static String[] REGISTRO = new String[]{
+                Productos.COLUMN_NAME_ID,
+                Productos.COLUMN_NAME_CODIGO,
+                Productos.COLUMN_NAME_NOMBRE,
+                Productos.COLUMN_NAME_MARCA,
+                Productos.COLUMN_NAME_PRECIO,
+                Productos.COLUMN_NAME_TIPO,
+        };
     }
 }
